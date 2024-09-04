@@ -30,6 +30,7 @@ public class ChildService {
 
     public void saveChild(ChildDTO childDTO) {
         Child child = convertToEntity(childDTO);
+        //коммету
         childRepository.save(child);
     }
 
