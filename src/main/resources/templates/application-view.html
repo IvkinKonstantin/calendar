@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Application Details</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<h1>Application Details</h1>
+
+<div>
+    <p><strong>ID:</strong> <span th:text="${app.id}">1</span></p>
+    <p><strong>Client Name:</strong> <span th:text="${app.clientName}">John Doe</span></p>
+    <p><strong>Status:</strong> <span th:text="${app.status}">New</span></p>
+    <p><strong>Date:</strong> <span th:text="${#temporals.format(app.date, 'yyyy-MM-dd HH:mm')}">2023-01-01 12:00</span></p>
+    <p><strong>Source:</strong> <span th:text="${app.source}">Web</span></p>
+    <p><strong>Details:</strong> <span th:text="${app.details}">Some details</span></p>
+</div>
+
+<h2>Client Contacts</h2>
+
+<a th:href="@{/contacts/create/{clientId}(clientId=${app.clientId})}" class="btn btn-primary">Add New Contact</a>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="contact : ${contacts}">
+        <td th:text="${contact.type}">Email</td>
+        <td th:text="${contact.status}">Completed</td>
+        <td th:text="${#temporals.format(contact.date, 'yyyy-MM-dd HH:mm')}">2023-01-01 12:00</td>
+        <td th:text="${contact.description}">Contact details</td>
+        <td>
+            <a th:href="@{/contacts/edit/{contactId}(contactId=${contact.id})}" class="btn btn-warning">Edit</a>
+            <form th:action="@{/contacts/delete/{contactId}(contactId=${contact.id})}" method="post" style="display:inline;">
+                <input type="hidden" th:value="${app.clientId}" name="clientId" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Children</h2>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>Age</th>
+        <th>Preferred Character</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="child : ${children}">
+        <td th:text="${child.id}">1</td>
+        <td th:text="${child.name}">John</td>
+        <td th:text="${child.gender}">Male</td>
+        <td th:text="${child.age}">10</td>
+        <td th:text="${child.preferredCharacter}">Spider-Man</td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:insert="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Event for Child</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@5.10.1/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@5.10.1/main.min.js"></script>
+</head>
+<body>
+
+<div th:insert="fragments/header :: header"></div>
+
+<h1>Create Event for Child</h1>
+
+<h2 th:text="'Child: ' + ${child.name}"></h2>
+
+<select id="teacherSelect" onchange="loadAvailability()">
+    <option value="">Select a Teacher</option>
+    <option th:each="teacher : ${teachers}" th:value="${teacher.id}" th:text="${teacher.name}"></option>
+</select>
+
+<div id="calendar"></div>
+
+<script>
+    // Получаем ID ребенка из Thymeleaf
+    var childId = [[${child.id}]];
+    var createdById = 1;  // Здесь можно подставить ID пользователя, который создает событие
+
+    function loadAvailability() {
+        var teacherId = document.getElementById('teacherSelect').value;
+        if (teacherId) {
+            fetch(`/children/${childId}/events/availability/` + teacherId)
+                .then(response => response.json())
+                .then(events => {
+                    // Удаление всех событий
+                    var eventSources = calendar.getEventSources();
+                    eventSources.forEach(source => source.remove());
+
+                    // Добавление новых событий
+                    calendar.addEventSource(events.map(event => ({
+                        title: 'Available',
+                        start: event.startTime,
+                        end: event.endTime
+                    })));
+                });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            selectable: true,
+            editable: true,
+            events: [],
+            select: function(info) {
+                let teacherId = document.getElementById('teacherSelect').value;
+
+                if (teacherId) {
+                    if (confirm('Do you want to create an event for this time slot?')) {
+                        fetch(`/children/${childId}/events/create`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                teacherId: teacherId,
+                                childrenIds: [childId],
+                                startTime: info.startStr,
+                                endTime: info.endStr,
+                                eventType: 'lesson',  // пример значения
+                                status: 'scheduled',  // пример значения
+                                createdByType: 'teacher',  // пример значения
+                                createdById: createdById  // пример значения
+                            }),
+                        }).then(response => {
+                            if (response.ok) {
+                                alert('Event created successfully');
+                                calendar.addEvent({
+                                    title: 'Event',
+                                    start: info.startStr,
+                                    end: info.endStr
+                                });
+                            } else {
+                                alert('Error creating event');
+                            }
+                        });
+                    }
+                } else {
+                    alert('Please select a teacher.');
+                }
+                calendar.unselect();
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+
+<div th:insert="fragments/footer :: footer"></div>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Application List</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<h1>Application List</h1>
+
+<a th:href="@{/applications/create}" class="btn btn-primary">Create New Application</a>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Client Name</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Number of Children</th>
+        <th>First Child Details</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="app : ${apps}">
+        <td th:text="${app.id}">1</td>
+        <td th:text="${app.clientName}">John Doe</td>
+        <td th:text="${app.status}">New</td>
+        <td th:text="${#temporals.format(app.date, 'yyyy-MM-dd HH:mm')}">2023-01-01 12:00</td>
+        <td th:text="${app.children.size()}">2</td>
+        <td>
+            <span th:if="${app.children.size() > 0}">
+                <span th:text="${app.children.get(0).name}">Child Name</span>,
+                <span th:text="${app.children.get(0).age}">10</span> years old,
+                <span th:text="${app.children.get(0).gender}">Male</span>,
+                prefers <span th:text="${app.children.get(0).preferredCharacter}">Spider-Man</span>
+            </span>
+            <span th:if="${app.children.size() == 0}">
+                No children
+            </span>
+        </td>
+        <td>
+            <a th:href="@{/applications/{id}(id=${app.id})}" class="btn btn-info">View</a>
+            <a th:href="@{/applications/edit/{id}(id=${app.id})}" class="btn btn-warning">Edit</a>
+            <form th:action="@{/applications/delete/{id}(id=${app.id})}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:insert="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Child Form</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<h1>Create or Edit Child</h1>
+<form th:action="@{/applications/children/save}" th:object="${child}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" th:field="*{clientId}" />
+
+    <div>
+        <label for="name">Child Name:</label>
+        <input type="text" id="name" th:field="*{name}" placeholder="Enter child's name" required/>
+    </div>
+    <div>
+        <label for="gender">Gender:</label>
+        <input type="text" id="gender" th:field="*{gender}" placeholder="Enter child's gender" required/>
+    </div>
+    <div>
+        <label for="age">Age:</label>
+        <input type="number" id="age" th:field="*{age}" placeholder="Enter child's age" required/>
+    </div>
+    <div>
+        <label for="preferredCharacter">Preferred Character:</label>
+        <input type="text" id="preferredCharacter" th:field="*{preferredCharacter}" placeholder="Enter preferred character"/>
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Save Child</button>
+    </div>
+</form>
+
+<div th:insert="fragments/footer :: footer"></div>
+</body>
+</html>

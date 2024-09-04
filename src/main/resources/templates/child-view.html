@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Child Details</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<h1>Child Details</h1>
+
+<div>
+  <p><strong>Name:</strong> <span th:text="${child.name}">John Doe</span></p>
+  <p><strong>Gender:</strong> <span th:text="${child.gender}">Male</span></p>
+  <p><strong>Age:</strong> <span th:text="${child.age}">10</span></p>
+  <p><strong>Preferred Character:</strong> <span th:text="${child.preferredCharacter}">Spider-Man</span></p>
+</div>
+
+<h2>Associated Teachers</h2>
+<table border="1">
+  <thead>
+  <tr>
+    <th>Teacher Name</th>
+    <th>Binding Type</th>
+    <th>Binding Date</th>
+    <th>Unbinding Date</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="link : ${links}">
+    <td th:text="${link.teacherName}">Teacher Name</td>
+    <td th:text="${link.bindingType}">Binding Type</td>
+    <td th:text="${#temporals.format(link.bindingDate, 'yyyy-MM-dd HH:mm')}">Binding Date</td>
+    <td th:text="${#temporals.format(link.unbindingDate, 'yyyy-MM-dd HH:mm')}">Unbinding Date</td>
+    <td>
+      <form th:action="@{/children/remove-link/{linkId}(linkId=${link.id})}" method="post">
+        <button type="submit">Remove</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h2>Add Teacher</h2>
+<form th:action="@{/children/{id}/add-teacher(id=${child.id})}" th:object="${newLink}" method="post">
+  <div>
+    <label for="teacher">Select Teacher:</label>
+    <select id="teacher" th:field="*{teacherId}">
+      <option value="" disabled selected>Select a Teacher</option>
+      <option th:each="teacher : ${teachers}" th:value="${teacher.id}" th:text="${teacher.firstName + ' ' + teacher.lastName}"></option>
+    </select>
+  </div>
+
+  <div>
+    <label for="bindingType">Binding Type:</label>
+    <input type="text" id="bindingType" th:field="*{bindingType}" placeholder="Enter binding type" required/>
+  </div>
+
+  <button type="submit">Add Teacher</button>
+</form>
+
+<!-- Добавляем ссылку на расписание ребенка -->
+<h2>Schedule</h2>
+<a th:href="@{/children/{id}/events(id=${child.id})}" class="btn btn-primary">View Child's Schedule</a>
+
+<div th:insert="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Contact Form</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+  <script>
+    function toggleFields() {
+      var creatorType = document.getElementById("createdBy").value;
+      var operatorField = document.getElementById("operatorField");
+      var teacherField = document.getElementById("teacherField");
+
+      operatorField.style.display = "none";
+      teacherField.style.display = "none";
+
+      if (creatorType === "OPERATOR") {
+        operatorField.style.display = "block";
+      } else if (creatorType === "TEACHER") {
+        teacherField.style.display = "block";
+      }
+    }
+
+    window.onload = function() {
+      toggleFields();
+    }
+  </script>
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<h1>Create or Edit Contact</h1>
+
+<form th:action="@{/contacts/save}" th:object="${contact}" method="post">
+  <input type="hidden" th:field="*{id}" />
+  <input type="hidden" th:field="*{clientId}" />
+
+  <div>
+    <label for="type">Type:</label>
+    <input type="text" id="type" th:field="*{type}" placeholder="Enter contact type" required/>
+  </div>
+  <div>
+    <label for="status">Status:</label>
+    <input type="text" id="status" th:field="*{status}" placeholder="Enter contact status" required/>
+  </div>
+  <div>
+    <label for="date">Date:</label>
+    <input type="datetime-local" id="date" th:field="*{date}" th:value="${formattedDate}"  required/>
+
+  </div>
+  <div>
+    <label for="description">Description:</label>
+    <textarea id="description" th:field="*{description}" placeholder="Enter description"></textarea>
+  </div>
+  <div>
+    <label for="createdBy">Created By:</label>
+    <select id="createdBy" th:field="*{creatorType}" onchange="toggleFields()">
+      <option value="CLIENT" th:selected="${creatorType eq 'CLIENT'}">Client</option>
+      <option value="OPERATOR" th:selected="${creatorType eq 'OPERATOR'}">Operator</option>
+      <option value="TEACHER" th:selected="${creatorType eq 'TEACHER'}">Teacher</option>
+    </select>
+  </div>
+
+  <!-- Условный блок для выбора оператора -->
+  <div id="operatorField" style="display:none;">
+    <label for="operatorId">Select Operator:</label>
+    <select id="operatorId" th:field="*{operatorId}">
+      <option value="" disabled selected>Select an Operator</option>
+      <option th:each="operator : ${operators}" th:value="${operator.id}" th:text="${operator.name}"></option>
+    </select>
+  </div>
+
+  <!-- Условный блок для выбора учителя -->
+  <div id="teacherField" style="display:none;">
+    <label for="teacherId">Select Teacher:</label>
+    <select id="teacherId" th:field="*{teacherId}">
+      <option value="" disabled selected>Select a Teacher</option>
+      <option th:each="teacher : ${teachers}" th:value="${teacher.id}" th:text="${teacher.name}"></option>
+    </select>
+  </div>
+
+  <div>
+    <label for="isPublic">Public:</label>
+    <input type="checkbox" id="isPublic" th:field="*{isPublic}"/>
+  </div>
+
+  <div>
+    <button type="submit" class="btn btn-primary">Save Contact</button>
+  </div>
+</form>
+
+<div th:insert="fragments/footer :: footer"></div>
+</body>
+</html>

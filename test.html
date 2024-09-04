@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Service</title>
+
+    <!-- FullCalendar CSS -->
+
+</head>
+<body>
+<h1>Calendar Service</h1>
+
+<!-- Календарь -->
+<div id="calendar"></div>
+
+<!-- Секция для управления событиями и доступностью -->
+<section id="manage-schedule">
+    <h2>Create Event</h2>
+    <form id="create-event-form">
+        <label>Teacher ID: <input type="text" id="teacherId"></label><br>
+        <label>Student IDs (comma-separated): <input type="text" id="studentIds"></label><br>
+        <label>Start Time: <input type="datetime-local" id="startTime"></label><br>
+        <label>End Time: <input type="datetime-local" id="endTime"></label><br>
+        <label>Event Type: <input type="text" id="eventType" value="group"></label><br>
+        <label>Status: <input type="text" id="status" value="scheduled"></label><br>
+        <label>Created By Type: <input type="text" id="createdByType" value="teacher"></label><br>
+        <label>Created By ID: <input type="text" id="createdById"></label><br>
+        <button type="submit">Create Event</button>
+    </form>
+    <p id="create-event-result"></p>
+
+    <h2>Manage Teacher Availability</h2>
+    <form id="add-availability-form">
+        <label>Teacher ID: <input type="text" id="availabilityTeacherId"></label><br>
+        <label>Start Time: <input type="datetime-local" id="availabilityStartTime"></label><br>
+        <label>End Time: <input type="datetime-local" id="availabilityEndTime"></label><br>
+        <button type="submit">Add Availability</button>
+    </form>
+    <p id="availability-result"></p>
+</section>
+
+<!-- FullCalendar JS -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script src="app.js"></script>
+</body>
+</html>

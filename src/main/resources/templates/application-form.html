@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Application Form</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div th:insert="fragments/header :: header"></div>
+
+<h1>Create or Edit Application</h1>
+
+<form th:action="@{/applications/save}" th:object="${app}" method="post">
+  <!-- Поля для заявки -->
+  <input type="hidden" th:field="*{id}" />
+  <input type="hidden" th:field="*{clientId}" />
+
+  <div>
+    <label for="clientName">Client Name:</label>
+    <input type="text" id="clientName" th:field="*{clientName}" placeholder="Enter client's name" required/>
+  </div>
+  <div>
+    <label for="clientEmail">Client Email:</label>
+    <input type="email" id="clientEmail" th:field="*{clientEmail}" placeholder="Enter client's email" required/>
+  </div>
+  <div>
+    <label for="clientPhone">Client Phone:</label>
+    <input type="tel" id="clientPhone" th:field="*{clientPhone}" placeholder="Enter client's phone" required/>
+  </div>
+  <div>
+    <label for="status">Application Status:</label>
+    <select id="status" th:field="*{status}">
+      <option value="NEW">New</option>
+      <option value="IN_PROGRESS">In Progress</option>
+      <option value="COMPLETED">Completed</option>
+    </select>
+  </div>
+  <div>
+    <label for="source">Application Source:</label>
+    <input type="text" id="source" th:field="*{source}" placeholder="Enter source of the application"/>
+  </div>
+  <div>
+    <label for="details">Details:</label>
+    <textarea id="details" th:field="*{details}" placeholder="Enter details"></textarea>
+  </div>
+
+  <h2>Children</h2>
+
+  <a th:href="@{/applications/children/edit/0(clientId=${app.clientId})}" class="btn btn-primary">Add New Child</a>
+
+  <table border="1">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Age</th>
+      <th>Preferred Character</th>
+      <th>Actions</th>
+      <th>View</th> <!-- Добавляем колонку для просмотра -->
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="child : ${children}">
+      <td th:text="${child.id}">1</td>
+      <td th:text="${child.name}">John</td>
+      <td th:text="${child.gender}">Male</td>
+      <td th:text="${child.age}">10</td>
+      <td th:text="${child.preferredCharacter}">Spider-Man</td>
+      <td>
+        <a th:href="@{/applications/children/edit/{id}(id=${child.id})}" class="btn btn-warning">Edit</a>
+        <button type="button" class="btn btn-danger"
+                th:onclick="'deleteChild(' + ${child.id} + ', ' + ${app.clientId} + ')'">
+          Delete
+        </button>
+      </td>
+      <td>
+        <a th:href="@{/children/{id}(id=${child.id})}" class="btn btn-info">View</a> <!-- Ссылка на просмотр ребенка -->
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div>
+    <button type="submit" class="btn btn-primary">Save Application</button>
+  </div>
+</form>
+
+<form id="deleteChildForm" action="" method="post">
+  <input type="hidden" id="deleteChildId" name="childId" value="" />
+  <input type="hidden" id="deleteClientId" name="clientId" value="${app.clientId}" />
+</form>
+
+<div th:insert="fragments/footer :: footer"></div>
+
+<script>
+  function deleteChild(childId, clientId) {
+    var form = document.getElementById('deleteChildForm');
+    form.action = '/applications/children/delete/' + childId;
+    document.getElementById('deleteChildId').value = childId;
+    document.getElementById('deleteClientId').value = clientId;
+    form.submit();
+  }
+</script>
+
+</body>
+</html>
